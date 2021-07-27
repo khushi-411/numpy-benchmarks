@@ -9,10 +9,10 @@ WIP
 
 #### Graph 2:
 
-![output](https://user-images.githubusercontent.com/62256509/127099453-e50cc77b-ecd4-4b30-b337-94030119878d.jpg)
+![output-16](https://user-images.githubusercontent.com/62256509/127099493-3fb25787-e1b8-43a0-ad85-62b5f1912cbd.jpg)
 
 
 #### Graph 3:
 
-![output-16](https://user-images.githubusercontent.com/62256509/127099493-3fb25787-e1b8-43a0-ad85-62b5f1912cbd.jpg)
+![output](https://user-images.githubusercontent.com/62256509/127099453-e50cc77b-ecd4-4b30-b337-94030119878d.jpg)
 
