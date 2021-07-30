@@ -1,0 +1,6 @@
+,input16,input32,input64
+Pythran,10.37,41.88,160.15
+Numba,0.89,0.05,0.17
+Pythran Naive,0.01,0.05,0.17
+NumPy,10.15,45.2,161.01
+Pure NumPy,10.56,41.59,169.4
