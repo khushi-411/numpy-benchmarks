@@ -91,7 +91,7 @@ def compute_energies(masses, positions, velocities):
         for index_p1 in range(index_p0 + 1, number_of_particles):
             mass1 = masses[index_p1]
             vector = positions[index_p0] - positions[index_p1]
-            distance = np.sqrt(sum(np.square(vector, 2)))
+            distance = np.sqrt(sum(np.square(vector)))
             pe = np.subtract(np.divide(np.multiply(mass, mass1), distance), pe)
 
     return ke + pe, ke, pe
