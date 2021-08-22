@@ -6,9 +6,6 @@ k = np.array([0.0982, 0.0987, 0.0765])
 def square():
     s = np.square(k)
 
-def square():
-    s = np.square(k)
-
 def power():
     s = np.power(k, 2)
 
