@@ -2,6 +2,7 @@ import sys
 import math
 import time
 import timeit
+import cProfile
 from datetime import timedelta
 
 import numpy as np
@@ -50,14 +51,16 @@ def compute_accelerations(accelerations, masses, positions):
             mass1 = masses[index_p1]
             # vector = [0.453, 0.874, 0.086]
             vector = position0 - positions[index_p1]
+            #dist = np.linalg.norm(vector)
             # dis = 0.0432
-            distance = np.sqrt(np.square(vector).sum())
-            coef = 1.0 / distance ** 3
+            distance = np.square(vector).sum()
+            #coef = np.sqrt(distance) * distance
+            coef = distance ** 1.5
             # a1 = G * m2 * (r2 - r1) / dist ** 3/2
             # a2 = G * m1 * (r1 - r2) / dist ** 3/2
             # accelerations[index_p0] = [0.042, 0.0234, 0.0532]
-            accelerations[index_p0] -= coef * mass1 *  vector
-            accelerations[index_p1] += coef * mass0 * vector
+            accelerations[index_p0] -= mass1 * vector / coef
+            accelerations[index_p1] += mass0 * vector / coef
     #print('index_p0', accelerations[index_p0])
     #print('index_p1', accelerations[index_p1])
     #print(accelerations)
@@ -79,7 +82,6 @@ def optimized_numpy(
 
     """Calculaing initial accelerations of particle, due to their self potential energyand kinetic energy"""
     accelerations = compute_accelerations(accelerations, masses, positions)
-   
     #t = timeit.Timer('compute_accelerations(accelerations, masses, positions)')
     #t.timeit()
     _time = 0.0
@@ -88,7 +90,7 @@ def optimized_numpy(
     energy_previous = energy0
     
     for step in range(number_of_steps):
-        positions += sum(np.multiply(velocities, time_step), np.multiply(0.5, np.multiply(accelerations, time_step ** 2)))
+        positions += sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2))
         #print('before accelerations', accelerations)
         #print('before accelerations1', accelerations1)
         accelerations, accelerations1 = accelerations1, accelerations
@@ -97,7 +99,8 @@ def optimized_numpy(
         accelerations.fill(0)
         #print(accelerations)
         accelerations = compute_accelerations(accelerations, masses, positions)
-        velocities += np.multiply(0.5, np.multiply(time_step, np.add(accelerations, accelerations1)))
+        #cProfile.run('compute_accelerations(accelerations, masses, positions)')
+        velocities += 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1))
 
         _time += time_step
 
@@ -108,7 +111,6 @@ def optimized_numpy(
             #    f"dE/E = {(energy - energy_previous) / energy_previous:+.7f}"
             #)
             energy_previous = energy
-
     return energy, energy0
 
 #def pt_en(mass, mass1, distance, pe):
@@ -142,11 +144,11 @@ if __name__ == "__main__":
     number_of_steps = int(time_end/time_step) + 1
 
     path_input = sys.argv[1]
-    
     masses, positions, velocities = load_input_data(path_input)
-   # for i in range(5):
+    cProfile.run('optimized_numpy(time_step, number_of_steps, masses, positions, velocities)')
+   #for i in range(5):
    # energy, energy0 =
-    print('time taken: ', timeit.timeit("optimized_numpy(time_step, number_of_steps, masses, positions, velocities)", globals = globals(), number = 5))
+    #print('time taken: ', timeit.timeit("optimized_numpy(time_step, number_of_steps, masses, positions, velocities)", globals = globals(), number = 5))
 
     #print(f"Final dE/E = {(energy - energy0) / energy0:.7e}")
    # print(
