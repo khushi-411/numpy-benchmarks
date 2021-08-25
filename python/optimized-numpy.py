@@ -59,8 +59,8 @@ def compute_accelerations(accelerations, masses, positions):
             # a1 = G * m2 * (r2 - r1) / dist ** 3/2
             # a2 = G * m1 * (r1 - r2) / dist ** 3/2
             # accelerations[index_p0] = [0.042, 0.0234, 0.0532]
-            accelerations[index_p0] -= mass1 * vector / coef
-            accelerations[index_p1] += mass0 * vector / coef
+            accelerations[index_p0] = mass1 * vector / coef - accelerations[index_p0]
+            accelerations[index_p1] = mass0 * vector / coef + accelerations[index_p1]
     #print('index_p0', accelerations[index_p0])
     #print('index_p1', accelerations[index_p1])
     #print(accelerations)
