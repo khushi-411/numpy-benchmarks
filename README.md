@@ -3,11 +3,11 @@
 
 To run the python file:
 ```
-python filename.py input16.txt
+python filename.py data/dataset_filename.txt
 ```
 
 To run the C++ file:
 ```
 g++ -o c++ c++.cpp
-cat input16.txt | time ./c++
+cat data/dataset_filename.txt | time ./c++
 ```
