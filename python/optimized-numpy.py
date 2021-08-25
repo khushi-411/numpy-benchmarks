@@ -90,7 +90,7 @@ def optimized_numpy(
     energy_previous = energy0
     
     for step in range(number_of_steps):
-        positions += sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2))
+        positions = sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
         #print('before accelerations', accelerations)
         #print('before accelerations1', accelerations1)
         accelerations, accelerations1 = accelerations1, accelerations
@@ -100,7 +100,7 @@ def optimized_numpy(
         #print(accelerations)
         accelerations = compute_accelerations(accelerations, masses, positions)
         #cProfile.run('compute_accelerations(accelerations, masses, positions)')
-        velocities += 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1))
+        velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
         _time += time_step
 
