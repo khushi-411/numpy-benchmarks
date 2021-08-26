@@ -25,7 +25,6 @@ def compute_accelerations(accelerations, masses, positions):
         mass0 = masses[index_p0]
         vectors = position0 - positions[index_p0 + 1: nb_particles]
         distances = np.square(vectors).sum(axis=1)
-        print(distances)
         coefs = distances ** 1.5
         accelerations[index_p0 ] += np.sum(
             np.divide(np.multiply(masses[index_p0 + 1: nb_particles], vectors.T), coefs
@@ -92,7 +91,7 @@ if __name__ == "__main__":
     except IndexError:
         time_end = 10.0
 
-    time_step = 0.1
+    time_step = 0.001
     number_of_steps = int(time_end/time_step) + 1
 
     path_input = sys.argv[1]
