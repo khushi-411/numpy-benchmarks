@@ -1,6 +1,5 @@
 import sys
 import math
-import time
 import timeit
 import cProfile
 from datetime import timedelta
@@ -26,14 +25,18 @@ def compute_accelerations(accelerations, masses, positions):
         vectors = position0 - positions[index_p0 + 1: nb_particles]
         distances = np.square(vectors).sum(axis=1)
         coefs = distances ** 1.5
-        accelerations[index_p0 ] += np.sum(
-            np.divide(np.multiply(masses[index_p0 + 1: nb_particles], vectors.T), coefs
-        ))
-        accelerations[index_p0 + 1: nb_particles] += -1 * np.sum(
+        
+        accelerations[index_p0] = np.sum(
             np.divide(
-                mass0 * vectors.T, coefs
+                np.multiply(masses[index_p0 + 1 : nb_particles], -1 * vectors.T), coefs[0]
             )
         )
+        accelerations[index_p0 + 1 : nb_particles] = np.sum(
+            np.divide(
+                mass0 * vectors.T, coefs[i for i in coefs]
+            )
+        )
+        
     return accelerations
 
 def optimized_numpy(
@@ -44,12 +47,9 @@ def optimized_numpy(
         velocities: "float[:,:]",
     ):
 
-    """Creating variable for acceleration and initializing with zero"""
-
     accelerations = np.zeros(positions.shape, dtype = float)
     accelerations1 = np.zeros(positions.shape, dtype = float)
 
-    """Calculaing initial accelerations of particle, due to their self potential energyand kinetic energy"""
     accelerations = compute_accelerations(accelerations, masses, positions)
     _time = 0.0
 
@@ -57,7 +57,7 @@ def optimized_numpy(
     energy_previous = energy0
 
     for step in range(number_of_steps):
-        positions = sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
+        positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
