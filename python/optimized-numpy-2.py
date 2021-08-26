@@ -27,12 +27,12 @@ def compute_accelerations(accelerations, masses, positions):
         distances = np.square(vectors).sum(axis=1)
         print(distances)
         coefs = distances ** 1.5
-        accelerations[index_p0 ] = np.sum(
+        accelerations[index_p0 ] += np.sum(
             np.divide(np.multiply(masses[index_p0 + 1: nb_particles], vectors.T), coefs
         ))
-        accelerations[index_p0 + 1: nb_particles] = np.sum(
+        accelerations[index_p0 + 1: nb_particles] += -1 * np.sum(
             np.divide(
-                -1 * mass0 * vectors.T, coefs
+                mass0 * vectors.T, coefs
             )
         )
     return accelerations
