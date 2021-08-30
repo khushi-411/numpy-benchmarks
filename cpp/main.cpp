@@ -6,37 +6,31 @@
 typedef double real;
 using namespace std;
 
-// Class Star, contains the properties:
-// mass (m)
-// position (r)
-// velocity (v)
-// accelerations (a and a0)
-
 class Star {
 public:
-  real m;
-  vector<real> r;
-  vector<real> v;
-  vector<real> a, a0;
-  // Default constructor
-  Star() {
-    r.assign(3, 0);
-    v.assign(3, 0);
-    a.assign(3, 0);
-    a0.assign(3, 0);
-  }
-  // Detailed constructor
-  Star(real mass, vector<real> pos, vector<real> vel) {
-    m = mass;
-    r = pos;
-    v = vel;
-  }
-  // Print function (overloaded << operator)
-  friend ostream &operator<<(ostream &so, const Star &si) {
-    so << si.m << " " << si.r[0] << " " << si.r[1] << " " << si.r[2] << " "
-       << si.v[0] << " " << si.v[1] << " " << si.v[2] << endl;
-    return so;
-  }
+	real m;
+  	vector<real> r;
+  	vector<real> v;
+	vector<real> a, a0;
+  	// Default constructor
+  	Star() {
+    		r.assign(3, 0);
+    		v.assign(3, 0);
+    		a.assign(3, 0);
+    		a0.assign(3, 0);
+  	}
+  	// Detailed constructor
+  	Star(real mass, vector<real> pos, vector<real> vel) {
+    		m = mass;
+    		r = pos;
+    		v = vel;
+  	}	
+  	// Print function (overloaded << operator)
+  	friend ostream &operator<<(ostream &so, const Star &si) {
+    		so << si.m << " " << si.r[0] << " " << si.r[1] << " " << si.r[2] << " "
+       			<< si.v[0] << " " << si.v[1] << " " << si.v[2] << endl;
+    	return so;
+  	}
 };
 // Star cluster based on the Star class
 // A star cluster contains a number of stars
