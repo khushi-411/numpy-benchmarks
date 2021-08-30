@@ -49,7 +49,7 @@ def compute_accelerations(accelerations, masses, positions):
             else:
                 accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
                 accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], accelerations[index_p1])]
-
+    print(len(accelerations))
     return accelerations
 
 
