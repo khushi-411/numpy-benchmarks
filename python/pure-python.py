@@ -16,9 +16,9 @@ def load_input_data(path):
 
     return masses, positions, velocities
 
-
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = len(masses)
+
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
@@ -30,28 +30,14 @@ def compute_accelerations(accelerations, masses, positions):
 
             distance = 0
             for i in vector:
-                distance += i ** 2         # pow(i, 2)
-            
+                distance += pow(i, 2)       
+        
             coefs = distance ** 1.5
                 
-            if accelerations[index_p0] == float(0) and accelerations[index_p1] == float(0):
-                accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], [accelerations[index_p0]])]
-                accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], [accelerations[index_p1]])]
-            
-            elif accelerations[index_p0] == float(0) and accelerations[index_p1] != float(0):
-                accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], [accelerations[index_p0]])]
-                accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], accelerations[index_p1])]
-
-            elif accelerations[index_p0] != float(0) and accelerations[index_p1] == float(0.0):
-                accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
-                accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], [accelerations[index_p1]])]
-
-            else:
-                accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
-                accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], accelerations[index_p1])]
-    print(len(accelerations))
+            accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
+            accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], accelerations[index_p1])]
+    
     return accelerations
-
 
 def loop(
     time_step: float,
@@ -61,37 +47,51 @@ def loop(
     velocities: "float[:,:]",
 ):
 
-    accelerations = [float(0) for i in range(len(positions))]
-    accelerations1 = [float(0) for i in range(len(positions))]
+    accelerations = [[0.0 for _ in range(3)] for _ in range(16)]
+    accelerations1 = [[0.0 for _ in range(3)] for _ in range(16)]
     
     accelerations = compute_accelerations(accelerations, masses, positions)
     
     time = 0.0
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
-
+    
     for step in range(nb_steps):
         pos_val = []
         for (vel, acc) in zip(velocities, accelerations):
-            print('vel', vel)
-            print('acc', acc)
             pos = []
             for (v, a) in zip(vel, acc):
-                pos.append(sum(v * time_step, a * 0.5 * time_step ** 2))
+                pos.append(v * time_step + a * 0.5 * time_step ** 2)
             pos_val.append(pos)
-        print(pos_val)
-        #pos = [[ut[i][j] + at[i][j] for j in range(len(ut[0]))] for i in range(len(ut))]
-        #print(pos)
-        #pos = list(map(sum, zip(*i)) for i in zip(ut, at))
-        #print(pos)
-        print()
-        positions = [map(sum, zip(*i)) for i in zip(pos, positions)] #[sum(i) for i in zip(pos, positions)]
-        print(positions)
+        
+        positions1 = []
+        for (pos_val1, pos1) in zip(pos_val, positions):
+            pos_1 = []
+            for (pos_val0, pos0) in zip(pos_val1, pos1):
+                pos_1.append(pos_val0 + pos0)
+            positions1.append(pos_1)
+        positions = positions1
+        
         accelerations, accelerations1 = accelerations1, accelerations
-        #print(accelerations)
         #accelerations.fill(0)
+
         accelerations = compute_accelerations(accelerations, masses, positions)
-        velocities = 0.5 * time_step * (accelerations + accelerations1) + velocities
+
+        new_accelerations = []
+        for (acc, acc1) in zip(accelerations, accelerations1):
+            new_acc = []
+            for (a, a1) in zip(acc, acc1):
+                new_acc.append(a + a1)
+            new_accelerations.append(new_acc)
+
+        velocities1 = []
+        for (acc, vel) in zip(new_accelerations, velocities):
+            vel1 = []
+            for (a, v) in zip(acc, vel):
+                vel1.append(0.5 * time_step * a + v)
+            velocities1.append(vel1)
+        velocities = velocities1
+        
         time += time_step
 
         if not step % 100:
@@ -99,7 +99,6 @@ def loop(
             energy_previous = energy
 
     return energy, energy0
-
 
 def compute_energies(masses, positions, velocities):
 
@@ -131,7 +130,6 @@ def compute_energies(masses, positions, velocities):
             pe -= (mass0 * mass1) / distance
 
     return ke + pe, ke, pe
-
 
 if __name__ == "__main__":
 

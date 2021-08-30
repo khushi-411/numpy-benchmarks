@@ -33,7 +33,7 @@ def compute_accelerations(accelerations, masses, positions):
         )
         accelerations[index_p0 + 1 : nb_particles] = np.sum(
             np.divide(
-                mass0 * vectors.T, coefs[i for i in coefs]
+                mass0 * vectors.T, [i for i in coefs]
             )
         )
         
@@ -49,7 +49,7 @@ def optimized_numpy(
 
     accelerations = np.zeros(positions.shape, dtype = float)
     accelerations1 = np.zeros(positions.shape, dtype = float)
-
+    
     accelerations = compute_accelerations(accelerations, masses, positions)
     _time = 0.0
 
@@ -59,7 +59,7 @@ def optimized_numpy(
     for step in range(number_of_steps):
         positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
         accelerations, accelerations1 = accelerations1, accelerations
-        accelerations.fill(0)
+        #accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
         velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
