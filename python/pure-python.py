@@ -52,7 +52,7 @@ def loop(
     accelerations1 = [[0.0 for _ in range(3)] for _ in range(16)]
     
     accelerations = compute_accelerations(accelerations, masses, positions)
-    
+     
     time = 0.0
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0

@@ -11,17 +11,22 @@ def load_input_data(path):
     df = pd.read_csv(
         path, names = ["mass", "x", "y", "z", "vx", "vy", "vz"], delimiter=r"\s+"
     )
+
     masses = df["mass"].values.copy()
     positions = df.loc[:, ["x", "y", "z"]].values.copy()
     velocities = df.loc[:, ["vx", "vy", "vz"]].values.copy()
+
     return masses, positions, velocities
 
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
+
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
+
         vectors = position0 - positions[index_p0 + 1 : nb_particles]
+        
         distances = np.square(vectors).sum(axis=1)
         coefs = distances ** 1.5
         #print(coefs)
@@ -36,12 +41,13 @@ def compute_accelerations(accelerations, masses, positions):
                 mass0 * vectors.T, coefs
             )
         )
+        print(accelerations[index_p0 + 1 : nb_particles])
         
     return accelerations
 
 def optimized_numpy(
         time_step: float,
-        number_of_steps: int,
+        nb_steps: int,
         masses: "float[]",
         positions: "float[:,:]",
         velocities: "float[:,:]",
@@ -51,19 +57,20 @@ def optimized_numpy(
     accelerations1 = np.zeros(positions.shape, dtype = float)
     
     accelerations = compute_accelerations(accelerations, masses, positions)
-    _time = 0.0
+    
+    time = 0.0
 
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
 
-    for step in range(number_of_steps):
+    for step in range(nb_steps):
         positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
         velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
-        _time += time_step
+        time += time_step
 
         if not step % 100:
             energy, _, _ = compute_energies(masses, positions, velocities)
