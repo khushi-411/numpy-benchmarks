@@ -16,24 +16,24 @@ def load_input_data(path):
     velocities = df.loc[:, ["vx", "vy", "vz"]].values.copy()
     return masses, positions, velocities
 
-
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
-        vectors = position0 - positions[index_p0 + 1: nb_particles]
+        vectors = position0 - positions[index_p0 + 1 : nb_particles]
         distances = np.square(vectors).sum(axis=1)
         coefs = distances ** 1.5
-        
+        #print(coefs)
+        #print('coefs', coefs[index_p0 + 1: nb_particles])
         accelerations[index_p0] = np.sum(
             np.divide(
-                np.multiply(masses[index_p0 + 1 : nb_particles], -1 * vectors.T), coefs[0]
+                np.multiply(masses[index_p0 + 1 : nb_particles], -1 * vectors.T), coefs
             )
         )
         accelerations[index_p0 + 1 : nb_particles] = np.sum(
             np.divide(
-                mass0 * vectors.T, [i for i in coefs]
+                mass0 * vectors.T, coefs
             )
         )
         
@@ -59,7 +59,7 @@ def optimized_numpy(
     for step in range(number_of_steps):
         positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
         accelerations, accelerations1 = accelerations1, accelerations
-        #accelerations.fill(0)
+        accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
         velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
@@ -84,6 +84,10 @@ def compute_energies(masses, positions, velocities):
             pe = np.subtract(np.divide(np.multiply(mass, mass1), distance), pe)
     return ke + pe, ke, pe
 
+def main(time_step, nb_steps, masses, positions, velocities):
+    print('time taken:', timeit.timeit('optimized_numpy(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))
+    #cProfile.run('optimized_numpy(time_step, nb_steps, masses, positions, velocities)')
+
 if __name__ == "__main__":
 
     try:
@@ -92,8 +96,9 @@ if __name__ == "__main__":
         time_end = 10.0
 
     time_step = 0.001
-    number_of_steps = int(time_end/time_step) + 1
+    nb_steps = int(time_end/time_step) + 1
 
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-    cProfile.run('optimized_numpy(time_step, number_of_steps, masses, positions, velocities)')
+
+    main(time_step, nb_steps, masses, positions, velocities)

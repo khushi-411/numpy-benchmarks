@@ -1,6 +1,7 @@
 import sys
 import math
 import cProfile
+import timeit
 
 import numpy as np
 import pandas as pd
@@ -27,7 +28,7 @@ def compute_accelerations(accelerations, masses, positions):
             mass1 = masses[index_p1]
 
             vector = [p0 - p1 for (p0, p1) in zip(position0, positions[index_p1])]
-
+            
             distance = 0
             for i in vector:
                 distance += pow(i, 2)       
@@ -73,7 +74,7 @@ def loop(
         positions = positions1
         
         accelerations, accelerations1 = accelerations1, accelerations
-        #accelerations.fill(0)
+        accelerations = [[0.0 for acc0 in acc1] for acc1 in accelerations]
 
         accelerations = compute_accelerations(accelerations, masses, positions)
 
@@ -88,7 +89,7 @@ def loop(
         for (acc, vel) in zip(new_accelerations, velocities):
             vel1 = []
             for (a, v) in zip(acc, vel):
-                vel1.append(0.5 * time_step * a + v)
+                vel1.append(time_step * a + v)
             velocities1.append(vel1)
         velocities = velocities1
         
@@ -127,24 +128,30 @@ def compute_energies(masses, positions, velocities):
             for i in vector:
                 dist += i ** 2
             distance = math.sqrt(dist)
-            pe -= (mass0 * mass1) / distance
+            pe -= (mass0 * mass1) / pow(distance, 2)
 
     return ke + pe, ke, pe
 
-if __name__ == "__main__":
+def main(time_step, nb_steps, path_input, masses, positions, velocities):
 
-    try:
-        time_end = float(sys.argv[2])
-    except IndexError:
-        time_end = 10.
-
-    time_step = 0.001
-    nb_steps = int(time_end / time_step) + 1
-
-    path_input = sys.argv[1]
-    masses, positions, velocities = load_input_data(path_input)
     masses = masses.tolist()
     positions = positions.tolist()
     velocities = velocities.tolist()
+    
+    print('time taken: ', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))
+    #cProfile.run('loop(time_step, nb_steps, masses, positions, velocities)')
 
-    cProfile.run('loop(time_step, nb_steps, masses, positions, velocities)')
+if __name__ == "__main__":
+    
+    try:
+        time_end = float(sys.argv[2])
+    except IndexError:
+        time_end = 10.0
+
+    time_step = 0.001
+    nb_steps = int(time_end/time_step) + 1
+
+    path_input = sys.argv[1]
+    masses, positions, velocities = load_input_data(path_input)
+
+    main(time_step, nb_steps, path_input, masses, positions, velocities)

@@ -1,6 +1,6 @@
 ## NumPy Benchmarks
 
-**Note:** This work is originally published on [numpy.org](https://github.com/numpy/numpy.org).  
+**Note:** This work will be published on [numpy.org](https://github.com/numpy/numpy.org).  
 
 #### Basic Library Installation
 - NumPy: `sudo pacman -S python-numpy`
@@ -30,21 +30,21 @@
 
 #### Dependencies
 - Machine: 
-	- vendor_id	: GenuineIntel
-	- model name	: Intel(R) Core(TM) i7-10870H CPU @ 2.20GHz
-	- RAM           : 16GB
+	- vendor_id: GenuineIntel
+	- model name: Intel(R) Core(TM) i7-10870H CPU @ 2.20GHz
+	- RAM: 16GB
 - Operating Systems:
-	- DISTRIB_ID=ManjaroLinux
-	- DISTRIB_RELEASE=21.1.1
-	- DISTRIB_CODENAME=Pahvo
-	- DISTRIB_DESCRIPTION="Manjaro Linux"
-- Python                : 3.9.6
-- NumPy                 : 1.20.3
-- Pythran               : 0.9.12.post1
-- Transonic             : 0.4.10
-- Numba                 : 0.54.0
-- CMake                 : 3.21.1
-- GCC                   : 11.1.0
+	- DISTRIB_ID = ManjaroLinux
+	- DISTRIB_RELEASE = 21.1.1
+	- DISTRIB_CODENAME = Pahvo
+	- DISTRIB_DESCRIPTION = "Manjaro Linux"
+- Python: `3.9.6`
+- NumPy: `1.20.3`
+- Pythran: `0.9.12.post1`
+- Transonic: `0.4.10`
+- Numba: `0.54.0`
+- CMake: `3.21.1`
+- GCC: `11.1.0`
 
 #### References
 - [The issue for adding content on performance](https://github.com/numpy/numpy.org/issues/370)
