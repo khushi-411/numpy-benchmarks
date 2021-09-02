@@ -2,7 +2,6 @@ import sys
 import math
 import timeit
 import cProfile
-from datetime import timedelta
 
 import numpy as np
 import pandas as pd
@@ -36,7 +35,7 @@ def compute_accelerations(accelerations, masses, positions):
         )
         accelerations[index_p0 + 1 : nb_particles] = np.sum(
             np.divide(
-                mass0 * vectors.T, [i for i in coefs]
+                mass0 * vectors.T, coefs
             )
         )
         
@@ -50,12 +49,12 @@ def numba_loop(
         positions: "float[:,:]",
         velocities: "float[:,:]",
     ):
-    
-    accelerations = np.zeros(positions.shape, dtype = float)
-    accelerations1 = np.zeros(positions.shape, dtype = float)
+
+    accelerations = np.zeros_like(positions)
+    accelerations1 = np.zeros_like(positions)
 
     accelerations = compute_accelerations(accelerations, masses, positions)
-    _time = 0.0
+    time = 0.0
 
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
@@ -67,7 +66,7 @@ def numba_loop(
         accelerations = compute_accelerations(accelerations, masses, positions)
         velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
-        _time += time_step
+        time += time_step
 
         if not step % 100:
             energy, _, _ = compute_energies(masses, positions, velocities)
@@ -77,17 +76,21 @@ def numba_loop(
 @jit
 def compute_energies(masses, positions, velocities):
     ke = 0.5 * (np.multiply(masses, np.square(velocities).sum(axis = 1)).sum())
-    number_of_particles = masses.size
+    nb_particles = masses.size
     pe = 0.0
-    for index_p0 in range(number_of_particles - 1):
+    for index_p0 in range(nb_particles - 1):
 
         mass = masses[index_p0]
-        for index_p1 in range(index_p0 + 1, number_of_particles):
+        for index_p1 in range(index_p0 + 1, nb_particles):
             mass1 = masses[index_p1]
             vector = positions[index_p0] - positions[index_p1]
             distance = np.sqrt((vector ** 2).sum())
             pe = np.subtract(np.divide(np.multiply(mass, mass1), distance), pe)
     return ke + pe, ke, pe
+
+def main(time_step, nb_steps, masses, positions, velocities):
+    cProfile.run('numba_loop(time_step, nb_steps, masses, positions, velocities)')
+    #print('time taken:', timeit.timeit("numba_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 1))
 
 if __name__ == "__main__":
 
@@ -97,8 +100,8 @@ if __name__ == "__main__":
         time_end = 10.0
 
     time_step = 0.001
-    number_of_steps = int(time_end/time_step) + 1
+    nb_steps = int(time_end/time_step) + 1
 
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-    cProfile.run('numba_loop(time_step, number_of_steps, masses, positions, velocities)')
+    main(time_step, nb_steps, masses, positions, velocities)
