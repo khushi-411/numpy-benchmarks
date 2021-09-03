@@ -19,11 +19,11 @@ def load_input_data(path):
 
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = len(masses)
-
+    
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
-        
+         
         for index_p1 in range(index_p0 + 1, nb_particles):
             mass1 = masses[index_p1]
 
@@ -32,7 +32,6 @@ def compute_accelerations(accelerations, masses, positions):
             distance = 0
             for i in vector:
                 distance += pow(i, 2)       
-        
             coefs = distance ** 1.5
                 
             accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
@@ -47,7 +46,7 @@ def loop(
     positions: "float[:,:]",
     velocities: "float[:,:]",
 ):
-
+    
     accelerations = [[0.0 for _ in range(3)] for _ in range(16)]
     accelerations1 = [[0.0 for _ in range(3)] for _ in range(16)]
     
@@ -75,7 +74,6 @@ def loop(
         
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations = [[0.0 for acc0 in acc1] for acc1 in accelerations]
-
         accelerations = compute_accelerations(accelerations, masses, positions)
 
         new_accelerations = []
@@ -117,18 +115,22 @@ def compute_energies(masses, positions, velocities):
     for i in ke_list:
         ke += i
 
-    nb_particules = len(masses)
+    nb_particles = len(masses)
     pe = 0.0
-    for index_p0 in range(nb_particules - 1):
+    for index_p0 in range(nb_particles - 1):
         mass0 = masses[index_p0]
-        for index_p1 in range(index_p0 + 1, nb_particules):
+
+        for index_p1 in range(index_p0 + 1, nb_particles):
             mass1 = masses[index_p1]
+
             vector = [p0 - p1 for (p0, p1) in zip(positions[index_p0], positions[index_p1])]
+
             dist = 0
             for i in vector:
                 dist += i ** 2
             distance = math.sqrt(dist)
-            pe -= (mass0 * mass1) / pow(distance, 2)
+
+            pe = (mass0 * mass1) / pow(distance, 2) - pe
 
     return ke + pe, ke, pe
 
@@ -137,7 +139,7 @@ def main(time_step, nb_steps, path_input, masses, positions, velocities):
     masses = masses.tolist()
     positions = positions.tolist()
     velocities = velocities.tolist()
-    
+
     print('time taken: ', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))
     #cProfile.run('loop(time_step, nb_steps, masses, positions, velocities)')
 
@@ -154,4 +156,7 @@ if __name__ == "__main__":
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
+    positions = np.round(positions, decimals = 8)
+    velocities = np.round(velocities, decimals = 8)
+    
     main(time_step, nb_steps, path_input, masses, positions, velocities)

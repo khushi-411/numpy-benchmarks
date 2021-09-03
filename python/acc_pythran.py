@@ -1,7 +1,5 @@
 import sys
 import math
-import time
-from datetime import timedelta
 
 import numpy as np
 import pandas as pd
@@ -11,10 +9,12 @@ from transonic import jit
 def load_input_data(path):
     df = pd.read_csv(
             path, names = ["mass", "x", "y", "z", "vx", "vy", "vz"], delimiter = r"\s+"
-        )
+    )
+
     masses = df["mass"].values.copy()
     positions = df.loc[:, ["x", "y", "z"]].values.copy()
     velocities = df.loc[:, ["vx", "vy", "vz"]].values.copy()
+
     return masses, positions, velocities
 
 def advance_positions(positions, velocities, accelerations, time_step):

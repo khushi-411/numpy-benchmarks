@@ -62,3 +62,6 @@ def numba_loop(
 
 How to resolve?
 
+- https://stackoverflow.com/questions/55065419/typingerror-failed-in-nopython-mode-pipeline-step-nopython-frontend
+- Here, Use np.zeros_like() instead of np.zeros()
+

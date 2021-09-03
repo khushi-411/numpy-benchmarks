@@ -2,7 +2,6 @@ import sys
 import math
 import timeit
 import cProfile
-from datetime import timedelta
 
 import numpy as np
 import pandas as pd
@@ -20,17 +19,16 @@ def load_input_data(path):
 
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
-
+    
     for index_p0 in range(nb_particles - 1):
-        position0 = positions[index_p0]
+        position0 = positions[index_p0] 
         mass0 = masses[index_p0]
 
         vectors = position0 - positions[index_p0 + 1 : nb_particles]
         
-        distances = np.square(vectors).sum(axis=1)
+        distances = np.square(vectors).sum(axis = 1)
         coefs = distances ** 1.5
-        #print(coefs)
-        #print('coefs', coefs[index_p0 + 1: nb_particles])
+        
         accelerations[index_p0] = np.sum(
             np.divide(
                 np.multiply(masses[index_p0 + 1 : nb_particles], -1 * vectors.T), coefs
@@ -52,11 +50,11 @@ def optimized_numpy(
         velocities: "float[:,:]",
     ):
 
-    accelerations = np.zeros(positions.shape, dtype = float)
-    accelerations1 = np.zeros(positions.shape, dtype = float)
+    accelerations = np.zeros_like(positions)
+    accelerations1 = np.zeros_like(positions)
     
     accelerations = compute_accelerations(accelerations, masses, positions)
-    
+
     time = 0.0
 
     energy0, _, _ = compute_energies(masses, positions, velocities)
@@ -64,9 +62,11 @@ def optimized_numpy(
 
     for step in range(nb_steps):
         positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
+
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
+
         velocities = 0.5 * np.multiply(time_step, np.add(accelerations, accelerations1)) + velocities
 
         time += time_step
@@ -77,17 +77,24 @@ def optimized_numpy(
     return energy, energy0
 
 def compute_energies(masses, positions, velocities):
-    ke = 0.5 * (np.multiply(masses, np.square(velocities).sum(axis = 1)).sum())
-    number_of_particles = masses.size
-    pe = 0.0
-    for index_p0 in range(number_of_particles - 1):
 
-        mass = masses[index_p0]
-        for index_p1 in range(index_p0 + 1, number_of_particles):
+    ke = 0.5 * (np.multiply(masses, np.square(velocities).sum(axis = 1)).sum())
+
+    nb_particles = masses.size
+
+    pe = 0.0
+    for index_p0 in range(nb_particles - 1):
+
+        mass0 = masses[index_p0]
+        for index_p1 in range(index_p0 + 1, nb_particles):
+
             mass1 = masses[index_p1]
             vector = positions[index_p0] - positions[index_p1]
+
             distance = np.sqrt((vector ** 2).sum())
-            pe = np.subtract(np.divide(np.multiply(mass, mass1), distance), pe)
+
+            pe = np.subtract(np.divide(np.multiply(mass0, mass1), np.square(distance)), pe)
+
     return ke + pe, ke, pe
 
 def main(time_step, nb_steps, masses, positions, velocities):
@@ -106,5 +113,7 @@ if __name__ == "__main__":
 
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-
+    print('mass', masses)
+    print('positions', positions)
+    print('velocities', velocities)
     main(time_step, nb_steps, masses, positions, velocities)
