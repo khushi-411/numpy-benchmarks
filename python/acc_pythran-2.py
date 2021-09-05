@@ -48,7 +48,7 @@ def compute_accelerations(accelerations, masses, positions):
 @jit
 def pythran_loop(
         time_step: float,
-        number_of_steps: int,
+        nb_steps: int,
         masses: "float[]",
         positions: "float[:,:]",
         velocities: "float[:,:]",
@@ -63,7 +63,7 @@ def pythran_loop(
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
 
-    for step in range(number_of_steps):
+    for step in range(nb_steps):
         positions = sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
 
         accelerations, accelerations1 = accelerations1, accelerations

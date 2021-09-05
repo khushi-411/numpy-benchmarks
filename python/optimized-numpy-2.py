@@ -19,27 +19,28 @@ def load_input_data(path):
 
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
-    
+
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0] 
         mass0 = masses[index_p0]
 
         vectors = position0 - positions[index_p0 + 1 : nb_particles]
-        
+
         distances = np.square(vectors).sum(axis = 1)
         coefs = distances ** 1.5
-        
+
         accelerations[index_p0] = np.sum(
-            np.divide(
-                np.multiply(masses[index_p0 + 1 : nb_particles], -1 * vectors.T), coefs
-            )
+                np.divide(
+                    np.multiply(masses[index_p0 + 1: nb_particles], -1 * vectors.T), coefs
+                )
         )
-        accelerations[index_p0 + 1 : nb_particles] = np.sum(
+
+        accelerations[index_p0 + 1: nb_particles] = np.sum(
             np.divide(
                 mass0 * vectors.T, coefs
             )
         )
-        
+
     return accelerations
 
 def optimized_numpy(
@@ -52,9 +53,9 @@ def optimized_numpy(
 
     accelerations = np.zeros_like(positions)
     accelerations1 = np.zeros_like(positions)
-    
-    accelerations = compute_accelerations(accelerations, masses, positions)
 
+    accelerations = compute_accelerations(accelerations, masses, positions)
+    break
     time = 0.0
 
     energy0, _, _ = compute_energies(masses, positions, velocities)
@@ -113,7 +114,5 @@ if __name__ == "__main__":
 
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-    print('mass', masses)
-    print('positions', positions)
-    print('velocities', velocities)
+    
     main(time_step, nb_steps, masses, positions, velocities)
