@@ -53,9 +53,9 @@ def optimized_numpy(
 
     accelerations = np.zeros_like(positions)
     accelerations1 = np.zeros_like(positions)
-
+    
     accelerations = compute_accelerations(accelerations, masses, positions)
-    break
+     
     time = 0.0
 
     energy0, _, _ = compute_energies(masses, positions, velocities)

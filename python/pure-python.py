@@ -1,6 +1,5 @@
 import sys
 import math
-import cProfile
 import timeit
 
 import numpy as np
@@ -33,14 +32,14 @@ def compute_accelerations(accelerations, masses, positions):
             for i in vector:
                 distance += pow(i, 2)       
             coefs = distance ** 1.5
-                
+    
             accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 / coefs for vec_val in vector], accelerations[index_p0])]
             accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 / coefs for vec_val in vector], accelerations[index_p1])]
-    
+
     return accelerations
 
 def loop(
-    time_step: float,
+        time_step: float,
     nb_steps: int,
     masses: "float[]",
     positions: "float[:,:]",
@@ -51,7 +50,7 @@ def loop(
     accelerations1 = [[0.0 for _ in range(3)] for _ in range(len(positions))]
     
     accelerations = compute_accelerations(accelerations, masses, positions)
-    print(accelerations)
+
     time = 0.0
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
@@ -134,15 +133,6 @@ def compute_energies(masses, positions, velocities):
 
     return ke + pe, ke, pe
 
-def main(time_step, nb_steps, path_input, masses, positions, velocities):
-
-    masses = masses.tolist()
-    positions = positions.tolist()
-    velocities = velocities.tolist()
- 
-    print('time taken: ', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))
-    #cProfile.run('loop(time_step, nb_steps, masses, positions, velocities)')
-
 if __name__ == "__main__":
     
     try:
@@ -155,8 +145,9 @@ if __name__ == "__main__":
 
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-
-    #positions = np.round(positions, decimals = 8)
-    #velocities = np.round(velocities, decimals = 8)
     
-    main(time_step, nb_steps, path_input, masses, positions, velocities)
+    masses = masses.tolist()
+    positions = positions.tolist()
+    velocities = velocities.tolist()
+
+    print('time taken:', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 50))

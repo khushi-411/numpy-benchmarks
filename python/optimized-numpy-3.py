@@ -5,11 +5,9 @@ import timeit
 import numpy as np
 import pandas as pd
 
-from transonic import jit
-
 def load_input_data(path):
     df = pd.read_csv(
-        path, names = ["mass", "x", "y", "z", "vx", "vy", "vz"], delimiter=r"\s+"
+        path, names = ["mass", "x", "y", "z", "vx", "vy", "vz"], delimiter = r"\s+"
     )
 
     masses = df["mass"].values.copy()
@@ -18,16 +16,15 @@ def load_input_data(path):
 
     return masses, positions, velocities
 
-
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
 
     for index_p0 in range(nb_particles - 1):
-        position0 = positions[index_p0]
+        position0 = positions[index_p0] 
         mass0 = masses[index_p0]
 
-        vectors = position0 - positions[index_p0 + 1 : nb_particles]
-
+        vectors = position0 - positions[index_p0 + 1: nb_particles]
+        
         distances = np.square(vectors).sum(axis = 1)
         coefs = distances ** 1.5
 
@@ -45,7 +42,7 @@ def compute_accelerations(accelerations, masses, positions):
                 np.divide(
                 np.multiply(
                     mass0, vectors.T
-                    ),
+                    ), 
                 coefs).T,
             accelerations[index_p0 + 1: nb_particles]
             )
@@ -53,8 +50,7 @@ def compute_accelerations(accelerations, masses, positions):
 
     return accelerations
 
-@jit
-def pythran_loop(
+def optimized_numpy(
         time_step: float,
         nb_steps: int,
         masses: "float[]",
@@ -64,15 +60,16 @@ def pythran_loop(
 
     accelerations = np.zeros_like(positions)
     accelerations1 = np.zeros_like(positions)
-
-    accelerations = compute_accelerations(accelerations, masses, positions)
     
+    accelerations = compute_accelerations(accelerations, masses, positions)
+
     time = 0.0
+
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
 
     for step in range(nb_steps):
-        positions = sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
+        positions = sum(np.multiply(velocities, time_step), 0.5 * np.multiply(accelerations, time_step ** 2)) + positions
 
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
@@ -85,9 +82,7 @@ def pythran_loop(
         if not step % 100:
             energy, _, _ = compute_energies(masses, positions, velocities)
             energy_previous = energy
-
     return energy, energy0
-
 
 def compute_energies(masses, positions, velocities):
 
@@ -97,8 +92,8 @@ def compute_energies(masses, positions, velocities):
 
     pe = 0.0
     for index_p0 in range(nb_particles - 1):
-        mass0 = masses[index_p0]
 
+        mass0 = masses[index_p0]
         for index_p1 in range(index_p0 + 1, nb_particles):
 
             mass1 = masses[index_p1]
@@ -109,7 +104,6 @@ def compute_energies(masses, positions, velocities):
             pe = np.subtract(np.divide(np.multiply(mass0, mass1), np.square(distance)), pe)
 
     return ke + pe, ke, pe
-
 
 if __name__ == "__main__":
 
@@ -123,4 +117,5 @@ if __name__ == "__main__":
     
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
-    print('time taken: ', timeit.timeit("pythran_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 50))
+    
+    print(timeit.timeit('optimized_numpy(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))

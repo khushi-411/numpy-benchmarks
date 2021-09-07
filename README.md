@@ -28,6 +28,11 @@
 	cat data/dataset_filename.txt | time ./filename
 	```
 
+#### Files
+- `cpp/`: Consists of c++ code, used for implementing.
+- `python/`: Codes for NumPy, Python, Pythran, Numba.
+- `data/`: Six different text files, named as `inputX.txt`, where X is number of particles i.e. 16, 32, 64, 128, 256, 512 and 1000.
+
 #### Dependencies
 - Machine: 
 	- vendor_id: GenuineIntel
