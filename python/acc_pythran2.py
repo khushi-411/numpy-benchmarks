@@ -1,11 +1,11 @@
-import sys 
+import sys
 import math
 import timeit
 
 import numpy as np
 import pandas as pd
 
-import pythran
+from transonic import jit
 
 def load_input_data(path):
     df = pd.read_csv(
@@ -122,15 +122,18 @@ def compute_energies(masses, positions, velocities):
 
 if __name__ == "__main__":
     
-    try:
-        time_end = float(sys.argv[2])
-    except IndexError:
-        time_end = 10.0
-
+    #try:
+    #    time_end = float(sys.argv[2])
+    #except IndexError:
+    #    time_end = 10.0
+    
+    time_end = 10.0
     time_step = 0.001
     nb_steps = int(time_end/time_step) + 1
 
-    path_input = sys.argv[1]
+    path_input = "../data/input16.txt"
+    #path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    print('time taken: ', timeit.timeit("pythran_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 1))
+    python_loop(time_step, nb_steps, masses, positions, velocities)
+    #print('time taken: ', timeit.timeit("pythran_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 1))

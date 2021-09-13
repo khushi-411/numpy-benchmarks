@@ -53,10 +53,9 @@ public:
             rij[i] = si->r[i] - sj->r[i];
 
           real RdotR = inner_product(rij.begin(), rij.end(), rij.begin(), init);
-          real apre = 1. / sqrt(RdotR * RdotR * RdotR);
-
+	  real apre = 1. / sqrt(RdotR * RdotR * RdotR);
           for (int i = 0; i != 3; ++i) {
-            si->a[i] -= sj->m * apre * rij[i];
+            si->a[i] += sj->m * -1 *apre * rij[i];
           }
         }
       }
@@ -128,7 +127,6 @@ int main(int argc, char* argv[]) {
 
   vector<real> E(3), E0(3);
   E0 = cl.energies();
-  //cerr << "Energies: " << E0[0] << " " << E0[1] << " " << E0[2] << endl;
 
   real t = 0.0;
   real tend;
@@ -141,8 +139,8 @@ int main(int argc, char* argv[]) {
   real dt = 1e-3;
   int k = 0;
   
-  for (int i = 0; i < 50; i++)
-  {
+for (int i = 0; i < 1; i++)
+{
   cl.acceleration();
 
   while (t < tend) {
@@ -156,12 +154,9 @@ int main(int argc, char* argv[]) {
     k += 1;
     if (k % 100 == 0) {
       E = cl.energies();
-      //cout << "t= " << t << " E= " << E[0] << " " << E[1] << " " << E[2]
-      //     << " dE/E = " << (E[0] - E0[0]) / E0[0] << endl;
     }
   }
   }
-  // cout << "number time steps: " << k << endl;
 
   return 0;
 }

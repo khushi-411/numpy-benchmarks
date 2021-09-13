@@ -9,12 +9,15 @@ import numpy as np
 import pandas as pd
 
 def load_input_data(path):
+    
     df = pd.read_csv(
         path, names = ["mass", "x", "y", "z", "vx", "vy", "vz"], delimiter=r"\s+"
     )
+    
     masses = df["mass"].values.copy()
     positions = df.loc[:, ["x", "y", "z"]].values.copy()
     velocities = df.loc[:, ["vx", "vy", "vz"]].values.copy()
+    
     return masses, positions, velocities
 
 """
@@ -38,33 +41,26 @@ def compute_accelerations(accelerations, masses, positions):
         accelerations[index_p0+1:nb_particles] += np.sum(coef_m2 * vector)            
         
     return accelerations
-
 """
 
-"""Computing accelerations of two body"""
 def compute_accelerations(accelerations, masses, positions):
     nb_particles = masses.size
     for index_p0 in range(nb_particles - 1):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
+        
         for index_p1 in range(index_p0 + 1, nb_particles):
             mass1 = masses[index_p1]
-            # vector = [0.453, 0.874, 0.086]
+
             vector = position0 - positions[index_p1]
-            #dist = np.linalg.norm(vector)
-            # dis = 0.0432
+
             distance = np.square(vector).sum()
-            #coef = np.sqrt(distance) * distance
+
             coef = distance ** 1.5
-            # a1 = G * m2 * (r2 - r1) / dist ** 3/2
-            # a2 = G * m1 * (r1 - r2) / dist ** 3/2
-            # accelerations[index_p0] = [0.042, 0.0234, 0.0532]
+
             accelerations[index_p0] = mass1 * vector / coef - accelerations[index_p0]
             accelerations[index_p1] = mass0 * vector / coef + accelerations[index_p1]
-    #print('index_p0', accelerations[index_p0])
-    #print('index_p1', accelerations[index_p1])
-    #print(accelerations)
-    # acc = [[], [], [], [], []]
+
     return accelerations
 
 def optimized_numpy(
