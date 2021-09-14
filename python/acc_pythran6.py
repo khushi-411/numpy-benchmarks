@@ -26,16 +26,13 @@ def compute_accelerations(accelerations, masses, positions):
         position0 = positions[index_p0]
         mass0 = masses[index_p0]
 
-        for index_p1 in range(index_p0 + 1, nb_particles):
-            mass1 = masses[index_p1]
+        vectors = position0 - positions[index_p0 + 1: nb_particles]
 
-            vectors = position0 - positions[index_p1]
+        distances = (vectors**2).sum(axis=1)
+        coefs = 1./distances**1.5
 
-            distances = (vectors**2).sum()
-            coefs = 1./distances**1.5
-
-            accelerations[index_p0] += mass1 * -1 * vectors * coefs
-            accelerations[index_p1] += mass0 * vectors * coefs
+        accelerations[index_p0] += np.sum((masses[index_p0 + 1: nb_particles] * -1 * vectors.T * coefs).T, axis=0)
+        accelerations[index_p0 + 1: nb_particles] += (mass0 * vectors.T * coefs).T
 
     return accelerations
 
@@ -103,4 +100,4 @@ if __name__ == "__main__":
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    print('time taken:', timeit.timeit('pythran_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=50))
+    print('time taken:', timeit.timeit('pythran_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=1))
