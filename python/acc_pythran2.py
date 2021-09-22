@@ -5,6 +5,7 @@ import timeit
 import numpy as np
 import pandas as pd
 
+#import pythran
 from transonic import jit
 
 def load_input_data(path):
@@ -29,7 +30,7 @@ def compute_accelerations(accelerations, masses, positions):
 
         distances = np.square(vectors).sum(axis = 1)
         coefs = distances ** 1.5
-        
+        """ 
         ind0_mul = masses[index_p0 + 1: nb_particles] * (-1 * vectors.T)
         ind0_div = ind0_mul / coefs
         ind0_div = ind0_div.T
@@ -61,11 +62,12 @@ def compute_accelerations(accelerations, masses, positions):
             accelerations[index_p0 + 1: nb_particles]
             )
         accelerations[index_p0 + 1: nb_particles] = _temp
-        """
 
     return accelerations
 
-#pythran export pythran_loop(float, float, int, float[], float[:,:], float[:,:])
+#  #pythran export pythran_loop(float, float, int, float[], float[:,:], float[:,:])
+
+@jit
 def pythran_loop(
         time_step,
         nb_steps,
@@ -83,7 +85,7 @@ def pythran_loop(
     energy_previous = energy0
 
     for step in range(nb_steps):
-        positions = sum(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
+        positions = np.add(np.multiply(velocities, time_step), 0.5 *  np.multiply(accelerations, time_step ** 2)) + positions
 
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
@@ -131,9 +133,9 @@ if __name__ == "__main__":
     time_step = 0.001
     nb_steps = int(time_end/time_step) + 1
 
-    path_input = "../data/input16.txt"
-    #path_input = sys.argv[1]
+    #path_input = "../data/input16.txt"
+    path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    python_loop(time_step, nb_steps, masses, positions, velocities)
-    #print('time taken: ', timeit.timeit("pythran_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 1))
+    #pythran_loop(time_step, nb_steps, masses, positions, velocities)
+    print('time taken: ', timeit.timeit("pythran_loop(time_step, nb_steps, masses, positions, velocities)", globals = globals(), number = 1))

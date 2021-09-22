@@ -103,4 +103,6 @@ if __name__ == "__main__":
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    print('time taken:', timeit.timeit('pythran_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=50))
+    #from transonic.util import timeit
+    #print(f"{timeit('loop(n)', globals=locals()): .2e} s")
+    print('time taken:', timeit.timeit('pythran_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=1))

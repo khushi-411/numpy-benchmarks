@@ -29,8 +29,8 @@ def compute_accelerations(accelerations, masses, positions):
         distances = (vectors**2).sum(axis=1)
         coefs = 1./distances**1.5
 
-        accelerations[index_p0].__iadd__(np.sum((masses[index_p0 + 1: nb_particles] * -1 * vectors.T * coefs).T, axis=0))
-        accelerations[index_p0 + 1: nb_particles].__iadd__((mass0 * vectors.T * coefs).T)
+        accelerations[index_p0] += np.sum((masses[index_p0 + 1: nb_particles] * -1 * vectors.T * coefs).T, axis=0)
+        accelerations[index_p0 + 1: nb_particles] += (mass0 * vectors.T * coefs).T
 
     return accelerations
 
@@ -53,13 +53,13 @@ def numpy_loop(
     energy_previous = energy0
 
     for step in range(nb_steps):
-        positions.__iadd__(time_step*velocities + 0.5*accelerations*time_step**2)
+        positions += time_step*velocities + 0.5*accelerations*time_step**2
 
         accelerations, accelerations1 = accelerations1, accelerations
         accelerations.fill(0)
         accelerations = compute_accelerations(accelerations, masses, positions)
 
-        velocities.__iadd__(0.5*time_step*(accelerations+accelerations1))
+        velocities += 0.5*time_step*(accelerations+accelerations1)
  
         time += time_step
 
@@ -71,7 +71,7 @@ def numpy_loop(
 
 def compute_energies(masses, positions, velocities):
 
-    ke = 0.5 * np.sum(masses * np.sum(velocities**2, axis=1))
+    ke = 0.5 * masses @ np.sum(velocities**2, axis=1)
 
     nb_particles = masses.size
     pe = 0.0
@@ -102,4 +102,4 @@ if __name__ == "__main__":
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    print('time taken:', timeit.timeit('numpy_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=1)) 
+    print('time taken:', timeit.timeit('numpy_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=50)) 

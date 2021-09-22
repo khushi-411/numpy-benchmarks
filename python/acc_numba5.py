@@ -8,6 +8,8 @@ import pandas as pd
 from numba import njit
 jit = njit(cache = True, fastmath = True)
 
+#from transonic import jit
+
 def load_input_data(path):
 
     df = pd.read_csv(
@@ -33,7 +35,7 @@ def compute_accelerations(accelerations, masses, positions):
         distances = (vectors**2).sum(axis=1)
         coefs = 1./distances**1.5
 
-        accelerations[index_p0] += np.sum((masses[index_p0 + 1: nb_particles] * -1 * vectors.T * coefs), axis=0)
+        accelerations[index_p0] += np.sum((masses[index_p0 + 1: nb_particles] * -1 * vectors.T * coefs).T, axis=0)
 
         accelerations[index_p0 + 1: nb_particles] += (mass0 * vectors.T * coefs).T
 
@@ -77,7 +79,7 @@ def numba_loop(
 @jit
 def compute_energies(masses, positions, velocities):
 
-    ke = 0.5 * np.sum(masses * np.sum(velocities**2, axis=1))
+    ke = 0.5 * masses @ np.sum(velocities**2, axis=1)
 
     nb_particles = masses.size
     pe = 0.0
@@ -93,7 +95,7 @@ def compute_energies(masses, positions, velocities):
 
             pe -= (mass0*mass1) / distance**2
 
-    return ke + pe, ke, pe
+    return ke+pe, ke, pe
 
 if __name__ == "__main__":
 
@@ -108,4 +110,4 @@ if __name__ == "__main__":
     path_input = sys.argv[1]
     masses, positions, velocities = load_input_data(path_input)
 
-    print('time taken:', timeit.timeit('numba_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=1))
+    print('time taken:', timeit.timeit('numba_loop(time_step, nb_steps, masses, positions, velocities)', globals=globals(), number=50))

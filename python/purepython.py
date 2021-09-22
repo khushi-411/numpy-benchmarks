@@ -30,8 +30,8 @@ def compute_accelerations(accelerations, masses, positions):
             
             distance = 0
             for i in vector:
-                distance += pow(i, 2)       
-            coefs = 1./distance ** 1.5
+                distance += i**2       
+            coefs = 1./distance**1.5
     
             accelerations[index_p0] = [sum(i) for i in zip([vec_val * mass1 * -1 * coefs for vec_val in vector], accelerations[index_p0])]
             accelerations[index_p1] = [sum(i) for i in zip([vec_val * mass0 * coefs for vec_val in vector], accelerations[index_p1])]
@@ -50,7 +50,7 @@ def loop(
     accelerations1 = [[0.0 for _ in range(3)] for _ in range(len(positions))]
     
     accelerations = compute_accelerations(accelerations, masses, positions)
-    print(accelerations)
+
     time = 0.0
     energy0, _, _ = compute_energies(masses, positions, velocities)
     energy_previous = energy0
@@ -60,9 +60,9 @@ def loop(
         for (vel, acc) in zip(velocities, accelerations):
             pos = []
             for (v, a) in zip(vel, acc):
-                pos.append(v * time_step + a * 0.5 * time_step ** 2)
+                pos.append(v*time_step + a * 0.5 * time_step ** 2)
             pos_val.append(pos)
-        
+
         positions1 = []
         for (pos_val1, pos1) in zip(pos_val, positions):
             pos_1 = []
@@ -129,7 +129,7 @@ def compute_energies(masses, positions, velocities):
                 dist += i ** 2
             distance = math.sqrt(dist)
 
-            pe = (mass0 * mass1) / pow(distance, 2) - pe
+            pe -= (mass0 * mass1) / distance**2
 
     return ke + pe, ke, pe
 
@@ -150,4 +150,4 @@ if __name__ == "__main__":
     positions = positions.tolist()
     velocities = velocities.tolist()
 
-    print('time taken:', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 1))
+    print('time taken:', timeit.timeit('loop(time_step, nb_steps, masses, positions, velocities)', globals = globals(), number = 50))
