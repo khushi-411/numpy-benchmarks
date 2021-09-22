@@ -1,13 +1,6 @@
 ## My Experience
 First of all, I'd like to express my gratitude to the whole team for allowing me to be a part of such a great team. These days were completely life-changing months of my journey. My work was majorly focused on providing performance benchmarks to NumPy in realistic situations. The target was to show the world that NumPy is efficient in handling quasi real-life situations too.
 
-My journey with Quansight is based on the following parts:
-- Stage 1: When I joined the Quansight-Labs and got introduced to my project.
-- Stage 2: I overcome my fear and get into the projects.
-- Stage 3: I was confident enough to complete my project.
-- Stage 4: I felt my project was over and started to look into different projects.
-- Stage 5: Joy of Completion!
-
 The work was broadly divided majorly into the following categories:
 ### N-Body Problem
 The N-Body problem is one of the most famous and universally accepted problems for benchmarking.
@@ -40,4 +33,4 @@ Model Optimization was one of the most interesting parts for me to work on. I li
 Quansight has opened lots of great opportunities for me in the open-source world. I aim to make myself comfortable in resolving issues and bugs. In the nearby future, I am looking forward to contributing to other projects. It was one of the best learning experiences for me. 
 
 ### Acknowledgment
-I'd like to acknowledge my menter Matti Picus, Ralf Gommers, Melissa 
+I'd like to acknowledge my mentor Matti Picus, who has been very understanding and responsive towards my queries. I'd also like to thank Ralf Gommers and Melissa Weber Mendonca for setting up internship shares and giving us cool ideas for the project. Thanks to Ralf again who mentored me in absence of my mentor. Special thanks to Kushashwa Ravi Shrimali and Kshitij Kalambarkar for explaining cool learning tricks and life hacks. Thanks to you'll! It was great interacting with you'll.
