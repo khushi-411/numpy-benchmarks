@@ -21,7 +21,7 @@ def plot(x, labels, list_df, names):
         plt.bar_label(rect[ind], padding=3, fontsize=250)
 
     plt.xticks(x + width/2, names, fontsize=300)
-    plt.tick_params(axis='x', which='major', pad=50)
+    plt.tick_params(axis='x', which='major', pad=60)
     plt.yticks(fontsize=300)
     plt.legend(fontsize=250)
 
