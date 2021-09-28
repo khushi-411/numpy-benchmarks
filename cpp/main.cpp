@@ -113,6 +113,7 @@ int main(int argc, char* argv[]) {
   int dummy;
   vector<real> r(3), v(3);
 
+  // Read input data from the command line (makeplummer | dumbp)
   do {
     cin >> dummy;
     cin >> m;
@@ -125,9 +126,11 @@ int main(int argc, char* argv[]) {
 
   cl.s.pop_back();
 
+  // Compute initial energu of the system
   vector<real> E(3), E0(3);
   E0 = cl.energies();
 
+  // Start time, end time and simulation step
   real t = 0.0;
   real tend;
 

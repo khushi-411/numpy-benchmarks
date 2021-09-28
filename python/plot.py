@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def plot(x, labels, list_df, names):
 
-    fig = plt.figure(figsize=(350, 220), dpi=4)
+    plt.figure(figsize=(350, 220), dpi=4)
     plt.subplot(2, 1, 1)
 
     width = 0.25
@@ -19,20 +19,20 @@ def plot(x, labels, list_df, names):
     for ind, time_taken in enumerate(list1):
         rect[ind] = plt.bar(x + width*ind, time_taken, width, align='center', color=colors[ind % len(colors)], label=labels[ind])
         plt.bar_label(rect[ind], padding=3, fontsize=250)
-
+ 
     plt.xticks(x + width/2, names, fontsize=300)
-    plt.tick_params(axis='x', which='major', pad=60)
+    plt.tick_params(axis='both', which='major', pad=60)
     plt.yticks(fontsize=300)
     plt.legend(fontsize=250)
-
-    plt.ylabel(r'$\frac{Time\ (in secs)}{nParticles}$', fontsize=350)
-    plt.xlabel(r"$Number\ of\ Particles\ Simulated\ (nParticles)$", fontsize=270)
+    
+    plt.ylabel(r'$\frac{Time\ (in\ secs)}{nParticles}$', fontsize=350)
+    plt.xlabel(r"$Number\ of\ Particles\ Simulated(nParticles)$", fontsize=270)
     plt.title(r"$Library\ based\ Implementation$", fontsize=300)
 
     plt.subplot(2, 1, 2)
     rect = [0, 0, 0]
     colors = ['#044F88', '#4DABCF', 'm']
- 
+
     list2 = []
     for ind, list in enumerate(list_df):
         if ind >= 2:
@@ -43,23 +43,24 @@ def plot(x, labels, list_df, names):
         rect[ind] = plt.bar(x + width*ind, time_taken, width, align='center', color=colors[ind % len(colors)], label=labels[j])
         j += 1
         plt.bar_label(rect[ind], padding=3, fontsize=250)
-
+ 
     plt.xticks(x + width, names, fontsize=300)
     plt.yticks(fontsize=300)
     plt.legend(fontsize=250)
 
-    plt.ylabel(r'$\frac{Time\ (in secs)}{nParticles}$', fontsize=350)
-    plt.tick_params(axis='x', which='major', pad=50)
-    plt.xlabel(r"$Number\ of\ Particles\ Simulated\ (nParticles)$", fontsize=270)
+    plt.ylabel(r'$\frac{Time\ (in\ secs)}{nParticles}$', fontsize=350)
+    plt.tick_params(axis='both', which='major', pad=60)
+    plt.xlabel(r"$Number\ of\ Particles\ Simulated(nParticles)$", fontsize=270)
     plt.title(r"$Compiler\ based\ Implementation$", fontsize=300)
-
+    
     plt.tight_layout(pad=70.0)
     plt.savefig("performance_benchmarking")
 
 if __name__ == "__main__":
-    data_path = "data/table_new.csv"
+
+    data_path = "benchmarks/data/table.csv"
     df = pd.read_csv(data_path)
-    df = df.drop(['Unnamed: 0'], axis = 1)
+    df = df.drop(['Unnamed: 0'], axis=1)
     df = df.T
     df.columns = ["NumPy", "Python", "C++", "Numba", "Pythran"]
 
