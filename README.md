@@ -20,7 +20,7 @@ To Run the Files
 
 1. Clone the Repository.
    ```
-   git clone https://github.com/numpy/numpyorg-benchmarks
+   git clone https://github.com/khushi-411/numpy-benchmarks
    ```
 
 2. To execute NumPy and Python Code.
