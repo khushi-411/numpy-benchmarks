@@ -31,7 +31,7 @@ def plot(x, labels, list_df, names):
 
     plt.subplot(2, 1, 2)
     rect = [0, 0, 0]
-    colors = ['#044F88', '#4DABCF', 'm']
+    colors = ['#044F88', '#4DABCF', '#013243']
 
     list2 = []
     for ind, list in enumerate(list_df):
@@ -58,7 +58,7 @@ def plot(x, labels, list_df, names):
 
 if __name__ == "__main__":
 
-    data_path = "benchmarks/data/table.csv"
+    data_path = "data/benchmark_output.csv"
     df = pd.read_csv(data_path)
     df = df.drop(['Unnamed: 0'], axis=1)
     df = df.T
